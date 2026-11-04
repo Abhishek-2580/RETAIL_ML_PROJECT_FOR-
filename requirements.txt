@@ -1,4 +1,9 @@
-streamlit>=1.35
-pandas>=2.0
-numpy>=1.26
-plotly>=5.18
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+prophet
+mlflow
+jupyter
+streamlit

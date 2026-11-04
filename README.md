@@ -1,52 +1,86 @@
-<<<<<<< HEAD
-# RetailPulse: Customer Analytics & Demand Forecasting
+# RetailPulse: Retail Analytics & Machine Learning Project
 
-Analysis of 641,798 retail sales (Jan 2021 - Oct 2025, 5,000 customers, 200 products, 50 stores
-in Dubai, Abu Dhabi and Sharjah) with weekly demand forecasting, inventory review, customer
-segmentation, a churn study, an interactive dashboard and experiment tracking.
+End-to-end analysis of a retail business: sales EDA, demand forecasting, inventory risk, customer segmentation and churn prediction.
 
-## Files
-| File | Purpose |
-|---|---|
-| `RETAIL_final_v2.ipynb` | Full analysis with results and conclusions per section |
-| `pipeline.py` | Repeatable ETL: raw CSVs -> clean, merge, forecast, inventory, segments -> `data/*.csv` |
-| `app.py` | Streamlit dashboard (5 pages) reading `data/` |
-| `Dockerfile`, `requirements*.txt` | Container for the dashboard |
+## Project Goals
+- Understand sales, profit and performance by category, store, city and channel
+- Forecast product demand for the next 4 weeks
+- Identify stockout risk and overstock in inventory
+- Segment customers using RFM analysis
+- Predict which customers are likely to churn
 
-## Run it
+## Datasets
+| File | Description |
+|------|-------------|
+| `bm_customers.csv` | Customer details (age, gender, loyalty segment, registration date) |
+| `bm_sales.csv` | Transaction-level sales |
+| `bm_skus.csv` | Product details (category, subcategory, cost and list price) |
+| `bm_stores.csv` | Store details (city, opening date) |
+| `bm_inventory.csv` | Stock on hand, reorder points, restock dates |
+
+## Approach
+
+### 1. Data Cleaning & EDA
+- Renamed columns, fixed date types, removed duplicates, validated keys across tables
+- Merged sales, product, customer, store and inventory data
+- Analysed monthly trends, category/subcategory profit, store, city and channel performance
+
+### 2. Demand Forecasting
+- Time-based train/test split (last 30 days held out)
+- Baselines: last-week repeat, 28-day average, same weeks last year
+- Model: Prophet (weekly level, 4-week horizon)
+- Evaluation: MAE, RMSE, WAPE and a 13-window rolling backtest
+- Covers the top 5 products by volume
+
+### 3. Inventory Analysis
+- Items below reorder point, weeks of cover, dead stock
+- Excess stock value beyond 26 weeks of demand
+- Stockout risk status per product (OK / WATCH / STOCKOUT RISK)
+
+### 4. Customer Segmentation
+- RFM features (log-transformed and standardised)
+- K-Means with k = 3, chosen using silhouette score
+- Segments compared with loyalty tier, age and gender
+
+### 5. Churn Prediction
+- Churn = no purchase in the following 60 days
+- Features built only from data before the cutoff (no leakage)
+- Models: Logistic Regression and Random Forest
+- Metrics: ROC-AUC, PR-AUC, 5-fold cross-validation
+
+## Results
+> Fill these in from your notebook outputs.
+
+| Task | Best Model | Key Metric |
+|------|-----------|------------|
+| Demand forecast | _e.g. Prophet / blend_ | WAPE: _xx%_ |
+| Segmentation | K-Means (k=3) | Silhouette: _x.xx_ |
+| Churn prediction | _e.g. Random Forest_ | AUC: _x.xx_ |
+
+**Key findings**
+- _Top category / city / channel by revenue_
+- _Products at stockout risk_
+- _Share of stock value that is excess_
+- _Main differences between customer segments_
+
+## Project Structure
 ```
-pip install -r requirements-pipeline.txt
-python pipeline.py --raw-dir <folder with bm_*.csv> --out data      # add --skip-backtest for a quick run, --mlflow to log runs
+├── RETAIL_ML_PROJECT.ipynb   # Main notebook
+├── data/                     # Exported outputs (forecasts, segments, inventory)
+├── forecast_next_4_weeks.csv
+├── README.md
+└── requirements.txt
+```
+
+## How to Run
+```bash
 pip install -r requirements.txt
-streamlit run app.py
-python -m mlflow ui --backend-store-uri sqlite:///mlflow.db          # view logged runs
+jupyter notebook RETAIL_ML_PROJECT.ipynb
 ```
-Docker (run the pipeline first so `data/` exists):
-```
-docker build -t retailpulse .
-docker run -p 8501:8501 retailpulse
-```
+Place the five `bm_*.csv` files in the same folder as the notebook before running.
 
-## Findings
-- **Seasonality:** volume halves every September and rises in December, in every year of the data.
-- **Forecasting:** daily product demand is ~2-3 units and too noisy (WAPE 70-135%), so forecasting is weekly.
-  Over 13 four-week backtest windows Prophet had the lowest error on all 5 top products
-  (average WAPE 33.7% vs 37.7% for the best baseline). Product 1111 is low confidence.
-- **Inventory:** no stockout risk in this data (0 of 8,735 rows below reorder point); 88% of stock value
-  (38.9M at cost) exceeds 26 weeks of demand, mostly Electronics.
-- **Segmentation:** customers are very similar (silhouette 0.29), so segments are value tiers, not natural groups.
-  Loyalty tier does not match behaviour (Platinum spends the same as Silver).
-- **Churn:** with a 60-day definition (9% of customers) logistic regression and random forest reach AUC about 0.5,
-  i.e. no usable signal. The dashboard uses a simple recency rule instead.
+## Tech Stack
+Python, pandas, NumPy, Matplotlib, Seaborn, scikit-learn, Prophet, MLflow
 
-## Limitations
-- Inventory is a single snapshot (31 Oct 2025) and looks generated independently of sales.
-- About 25% of sales have no customer ID and are excluded from customer analysis.
-- Forecasts cover the top 5 products only; the November forecast was cross-checked against seasonal history.
-
-## Future work
-Drift monitoring, CI/CD, Kubernetes deployment, LSTM or gradient-boosting forecasts with promotion data,
-and richer customer data (returns, complaints, app activity) for churn.
-=======
-# Retail_ML_Project
->>>>>>> 5db99ff041beabe9725eccd93df5c85def8ae590
+## Author
+_Your name_ · _LinkedIn / GitHub link_

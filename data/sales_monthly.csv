@@ -1,4 +1,4 @@
-month,category,channel,city,units,sales,profit
+month,category,channel,store_city,units,sales,profit
 2021-01-01,Beverages,Amazon.ae,Abu Dhabi,122,1604.4099999999999,379.97999999999996
 2021-01-01,Beverages,Amazon.ae,Dubai,185,2441.43,702.3299999999999
 2021-01-01,Beverages,Amazon.ae,Sharjah,69,1005.51,261.75
